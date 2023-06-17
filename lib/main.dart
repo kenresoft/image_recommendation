@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
 
   final GoRouter _router = GoRouter(
     routes: <GoRoute>[
-      route(Constants.root, const Dashboard()),
+      route(Constants.root, const Home()),
       route(Constants.dashboard, const Dashboard()),
       route(Constants.home, const Home()),
       route(Constants.error, const ErrorPage()),
