@@ -1,7 +1,7 @@
 class Constants {
   Constants._();
 
-  static const String appName = 'Designers\'s App UI';
+  static const String appName = 'Image Recommendation System';
   static const String root = '/';
 
   //Navigation routes
@@ -24,4 +24,14 @@ class Constants {
 
   //Icons
   static const String appIcon = "$iconDir/icon.png";
+
+  static var maps = {
+    1: profile,
+    2: laptop,
+    3: moon,
+    4: tech,
+    5: web,
+    6: spaceship,
+    7: www,
+  };
 }
