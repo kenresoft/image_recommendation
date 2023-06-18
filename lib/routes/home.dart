@@ -1,11 +1,13 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:image_recommendation/data/constants/constants.dart';
 import 'package:image_recommendation/main.dart';
 import 'package:image_recommendation/routes/error.dart';
+
+import '../widgets/image_container.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -18,6 +20,10 @@ class _HomeState extends State<Home> {
   late Future<FirebaseApp> _initialization;
   var maps = Constants.maps;
   ColorScheme? color;
+
+  static Stream<QuerySnapshot> getStream() {
+    return FirebaseFirestore.instance.collection('dataset').orderBy('views').snapshots();
+  }
 
   @override
   void initState() {
@@ -32,80 +38,50 @@ class _HomeState extends State<Home> {
         future: _initialization,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            const ErrorPage();
+            return const ErrorPage();
           }
           if (snapshot.connectionState == ConnectionState.done) {
-            return Scaffold(
-              appBar: AppBar(
-                elevation: 1,
-                shadowColor: Colors.white70,
-                title: const Text(Constants.appName),
-              ),
-              body: ListView.builder(
-                itemCount: maps.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return imageContainer(index + 1);
-                },
-              ),
-            );
+            return buildDocument();
           }
           return const CircularProgressIndicator();
         });
   }
 
-  Widget imageContainer(int index) {
-    return GestureDetector(
-      onTap: () {
-        launch(context, Constants.error);
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.all(5),
-            color: Colors.deepPurple.shade200,
-            height: 230,
-            width: 300,
-            child: Column(
-              children: [
-                Image(image: ExactAssetImage(maps[index]!), height: 90),
-                const SizedBox(height: 5),
-                const Text(
-                  'Title',
-                  style: TextStyle(fontSize: 20),
+  StreamBuilder<QuerySnapshot<Object?>> buildDocument() {
+    return StreamBuilder<QuerySnapshot>(
+        stream: getStream(),
+        builder: (context, snapshot) {
+          var data = snapshot.data;
+          if (snapshot.hasError) {
+            const ErrorPage();
+          }
+          if (snapshot.hasData) {
+            if (data != null) {
+              return Scaffold(
+                appBar: AppBar(
+                  elevation: 1,
+                  shadowColor: Colors.white70,
+                  title: const Text(Constants.appName),
                 ),
-                const SizedBox(height: 5),
-                const Text(
-                  'Short description',
-                  style: TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 5),
-                RatingBar(
-                  initialRating: 0,
-                  maxRating: 10,
-                  allowHalfRating: true,
-                  updateOnDrag: true,
-                  ratingWidget: RatingWidget(
-                    full: const Icon(Icons.star, color: Colors.greenAccent),
-                    half: const Icon(Icons.star_half, color: Colors.yellowAccent),
-                    empty: const Icon(Icons.star_border, color: Colors.grey),
-                  ),
-                  onRatingUpdate: (double value) {
-                    log(value.toString());
+                body: ListView.builder(
+                  itemCount: maps.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ImageContainer(
+                      index: index + 1,
+                      snapshot: data.docs[index],
+                    );
                   },
                 ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Views: 1000',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+              );
+            }
+          }
+          return Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 155,
+                vertical: 360,
+              ),
+              child: const CircularProgressIndicator());
+        });
   }
 
   buildLaunch() => launch(context, Constants.dashboard);

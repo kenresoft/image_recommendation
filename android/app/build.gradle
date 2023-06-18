@@ -53,8 +53,26 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
-
+    /*flavorDimensions += "version"
+    productFlavors {
+        // Includes settings you want to keep only while developing your app.
+        dev {
+            // Enables pre-dexing for command-line builds. When using
+            // Android Studio 2.3 or higher, the IDE enables pre-dexing
+            // when deploying your app to a device running Android 5.0
+            // (API level 21) or higher, regardless of minSdkVersion.
+            dimension = "version"
+            minSdkVersion 21
+        }
+        prod {
+            // If you've configured the defaultConfig block for the production version of
+            // your app, you can leave this block empty and Gradle uses configurations in
+            // the defaultConfig block instead. You still need to include this flavor.
+            // Otherwise, all variants use the "dev" flavor configurations.
+        }
+    }*/
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
@@ -72,4 +90,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation platform('com.google.firebase:firebase-bom:32.1.1')
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation "androidx.multidex:multidex:2.0.1"
 }
