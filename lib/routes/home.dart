@@ -47,41 +47,57 @@ class _HomeState extends State<Home> {
         });
   }
 
-  StreamBuilder<QuerySnapshot<Object?>> buildDocument() {
+  StreamBuilder<QuerySnapshot> buildDocument() {
     return StreamBuilder<QuerySnapshot>(
-        stream: getStream(),
-        builder: (context, snapshot) {
+      stream: getStream(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          const ErrorPage();
+        }
+        if (snapshot.hasData) {
           var data = snapshot.data;
-          if (snapshot.hasError) {
-            const ErrorPage();
-          }
-          if (snapshot.hasData) {
-            if (data != null) {
-              return Scaffold(
-                appBar: AppBar(
-                  elevation: 1,
-                  shadowColor: Colors.white70,
-                  title: const Text(Constants.appName),
-                ),
-                body: ListView.builder(
-                  itemCount: maps.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ImageContainer(
-                      index: index + 1,
-                      snapshot: data.docs[index],
-                    );
-                  },
-                ),
-              );
-            }
-          }
-          return Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 155,
-                vertical: 360,
+          if (data != null) {
+            return Scaffold(
+              appBar: AppBar(
+                elevation: 1,
+                shadowColor: Colors.white70,
+                title: const Text(Constants.appName),
               ),
-              child: const CircularProgressIndicator());
-        });
+              body: ListView.builder(
+                itemCount: data.docs.length /*maps.length*/,
+                itemBuilder: (BuildContext context, int index) {
+                  return ImageContainer(
+                    index: index + 1,
+                    snapshot: data.docs[index],
+                  );
+                },
+              ),
+            );
+          }
+        }
+
+/*        FutureBuilder<QuerySnapshot>(
+            future: getStream().first,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                log(snapshot.error.toString());
+                return const ErrorPage();
+              }
+              if (snapshot.hasData) {
+                log(snapshot.data!.docs.toString());
+                return buildDocument();
+              }
+              log("loading");
+              return const CircularProgressIndicator();
+            });*/
+        return Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 155,
+              vertical: 360,
+            ),
+            child: const CircularProgressIndicator());
+      },
+    );
   }
 
   buildLaunch() => launch(context, Constants.dashboard);
