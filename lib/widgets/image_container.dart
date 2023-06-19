@@ -47,7 +47,7 @@ class ImageContainer extends StatelessWidget {
                 ),
                 const SizedBox(height: 5),
                 RatingBar(
-                  initialRating: 0,
+                  initialRating: (snapshot.get('rating') as int).toDouble(),
                   maxRating: 10,
                   allowHalfRating: true,
                   updateOnDrag: true,
@@ -57,12 +57,13 @@ class ImageContainer extends StatelessWidget {
                     empty: const Icon(Icons.star_border, color: Colors.grey),
                   ),
                   onRatingUpdate: (double value) {
+                    _updateRating(value);
                     log(value.toString());
                   },
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Views: ${snapshot.get('views') as String}',
+                  'Views: ${snapshot.get('views')}',
                   style: const TextStyle(fontSize: 16),
                 ),
               ],
@@ -71,5 +72,15 @@ class ImageContainer extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _updateRating(double value) {
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      final secureSnapshot = await transaction.get(snapshot.reference);
+
+      final rating = transaction.get(secureSnapshot.get('rating'));
+
+      transaction.update(secureSnapshot.reference, {'rating': value});
+    });
   }
 }
