@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:image_recommendation/data/constants/constants.dart';
 import 'package:image_recommendation/main.dart';
@@ -17,7 +16,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late Future<FirebaseApp> _initialization;
   var maps = Constants.maps;
   ColorScheme? color;
 
@@ -28,23 +26,12 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    _initialization = Firebase.initializeApp();
   }
 
   @override
   Widget build(BuildContext context) {
     color = Theme.of(context).colorScheme;
-    return FutureBuilder<FirebaseApp>(
-        future: _initialization,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const ErrorPage();
-          }
-          if (snapshot.connectionState == ConnectionState.done) {
-            return buildDocument();
-          }
-          return const CircularProgressIndicator();
-        });
+    return buildDocument();
   }
 
   StreamBuilder<QuerySnapshot<Object?>> buildDocument() {
@@ -64,7 +51,7 @@ class _HomeState extends State<Home> {
                   title: const Text(Constants.appName),
                 ),
                 body: ListView.builder(
-                  itemCount: maps.length,
+                  itemCount: data.docs.length /*maps.length*/,
                   itemBuilder: (BuildContext context, int index) {
                     return ImageContainer(
                       index: index + 1,
