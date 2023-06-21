@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extensionresoft/helper.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -108,10 +110,36 @@ launch(BuildContext context, String route, [Object? extra]) {
   GoRouter.of(context).push(route, extra: extra);
 }
 
-FutureOr appCallback(void value) {
+FutureOr appCallback(void value) async {
+  await Firebase.initializeApp();
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: false,
+    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+  );
   runApp(
     ProviderScope(
       child: MyApp(),
     ),
   );
+
+  /*FutureBuilder<FirebaseApp>(
+    future: initialization,
+    builder: (context, snapshot) {
+      if (snapshot.hasError) {
+        return const ErrorPage();
+      }
+      if (snapshot.connectionState == ConnectionState.done) {
+        FirebaseFirestore.instance.settings = const Settings(
+          persistenceEnabled: false,
+          cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+        );
+        runApp(
+          ProviderScope(
+            child: MyApp(),
+          ),
+        );
+      }
+      //return const CircularProgressIndicator();
+    },
+  );*/
 }
