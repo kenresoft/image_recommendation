@@ -47,7 +47,7 @@ class ImageContainer extends StatelessWidget {
                 ),
                 const SizedBox(height: 5),
                 RatingBar(
-                  initialRating: (snapshot.get('rating') as int).toDouble(),
+                  initialRating: (snapshot.get('rating')).toDouble(),
                   maxRating: 10,
                   allowHalfRating: true,
                   updateOnDrag: true,
@@ -58,7 +58,6 @@ class ImageContainer extends StatelessWidget {
                   ),
                   onRatingUpdate: (double value) {
                     _updateRating(value);
-                    log(value.toString());
                   },
                 ),
                 const SizedBox(height: 10),
@@ -78,9 +77,10 @@ class ImageContainer extends StatelessWidget {
     FirebaseFirestore.instance.runTransaction((transaction) async {
       final secureSnapshot = await transaction.get(snapshot.reference);
 
-      final rating = transaction.get(secureSnapshot.get('rating'));
+      final double rating = secureSnapshot.get('rating') as double;
 
-      transaction.update(secureSnapshot.reference, {'rating': value});
+      transaction.update(secureSnapshot.reference, {'rating': value});     // debug here....
+      log('DOCUMENT: ${secureSnapshot.reference.id} | VALUE: $value');
     });
   }
 }
