@@ -113,7 +113,7 @@ launch(BuildContext context, String route, [Object? extra]) {
 FutureOr appCallback(void value) async {
   await Firebase.initializeApp();
   FirebaseFirestore.instance.settings = const Settings(
-    persistenceEnabled: false,
+    persistenceEnabled: true,
     cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
   );
   runApp(

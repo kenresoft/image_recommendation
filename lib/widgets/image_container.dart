@@ -36,7 +36,7 @@ class ImageContainer extends StatelessWidget {
               children: [
                 Image(image: ExactAssetImage(Constants.maps[index]!), height: 90),
                 const SizedBox(height: 5),
-                Text(snapshot.id.wrap(characterLimit: 25), style: const TextStyle(fontSize: 20)),
+                Text(snapshot.id.wrap(25), style: const TextStyle(fontSize: 20)),
                 const SizedBox(height: 5),
                 const Text('Short description', style: TextStyle(fontSize: 16)),
                 const SizedBox(height: 5),
@@ -80,7 +80,17 @@ class ImageContainer extends StatelessWidget {
 }
 
 extension on String {
-  String wrap({int? characterLimit}) {
+  String wrap(int end, [int start = 0]) {
+    try {
+      return substring(start, end);
+    } catch (e) {
+      return this;
+    }
+  }
+}
+
+extension on String {
+  String wrap2({int? characterLimit}) {
     var cache = '';
     try {
       if (characterLimit != null) {
