@@ -36,15 +36,9 @@ class ImageContainer extends StatelessWidget {
               children: [
                 Image(image: ExactAssetImage(Constants.maps[index]!), height: 90),
                 const SizedBox(height: 5),
-                const Text(
-                  'Title',
-                  style: TextStyle(fontSize: 20),
-                ),
+                Text(snapshot.id.wrap(characterLimit: 25), style: const TextStyle(fontSize: 20)),
                 const SizedBox(height: 5),
-                const Text(
-                  'Short description',
-                  style: TextStyle(fontSize: 16),
-                ),
+                const Text('Short description', style: TextStyle(fontSize: 16)),
                 const SizedBox(height: 5),
                 RatingBar(
                   initialRating: (snapshot.get('rating')).toDouble(),
@@ -79,8 +73,24 @@ class ImageContainer extends StatelessWidget {
 
       final double rating = secureSnapshot.get('rating') as double;
 
-      transaction.update(secureSnapshot.reference, {'rating': value});     // debug here....
+      transaction.update(secureSnapshot.reference, {'rating': value}); // debug here....
       log('DOCUMENT: ${secureSnapshot.reference.id} | VALUE: $value');
     });
+  }
+}
+
+extension on String {
+  String wrap({int? characterLimit}) {
+    var cache = '';
+    try {
+      if (characterLimit != null) {
+        for (var i = 0; i < characterLimit; ++i) {
+          cache += this[i];
+        }
+      }
+    } catch (e) {
+      return this;
+    }
+    return cache;
   }
 }
