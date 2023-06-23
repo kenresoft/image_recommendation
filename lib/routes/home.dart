@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'dart:math'  as rand show Random;
+import 'dart:math' as rand show Random;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,7 +39,7 @@ class _HomeState extends State<Home> {
     return buildDocument();
   }
 
-  StreamBuilder<QuerySnapshot<Object?>> buildDocument() {
+  StreamBuilder<QuerySnapshot> buildDocument() {
     return StreamBuilder<QuerySnapshot>(
         stream: getStream(),
         builder: (context, snapshot) {
@@ -59,6 +59,7 @@ class _HomeState extends State<Home> {
                 body: ListView.builder(
                   itemCount: collection.docs.length /*maps.length*/,
                   itemBuilder: (BuildContext context, int index) {
+                    log(collection.docs.length.toString());
                     return ImageContainer(
                       index: index + 1,
                       snapshot: collection.docs[index],
@@ -109,8 +110,9 @@ class _HomeState extends State<Home> {
                 onPressed: () {
                   try {
                     FirebaseFirestore.instance.collection('dataset').doc(_textEditingController.text.trim()).set({
+                      'image_id': rand.Random().nextInt(100),
                       'rating': rand.Random().nextInt(10).toDouble(),
-                      'view': rand.Random().nextInt(1000),
+                      'views': rand.Random().nextInt(1000),
                     });
                   } finally {
                     Navigator.pop(context);
