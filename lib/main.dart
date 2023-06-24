@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extensionresoft/helper.dart';
@@ -34,7 +33,7 @@ class MyApp extends StatelessWidget {
     return Consumer(
       builder: (BuildContext context, WidgetRef ref, Widget? child) {
         var state = ref.watch(themeProvider.select((value) => value));
-        log(state.toString());
+        //log(state.toString());
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           title: Constants.appName,

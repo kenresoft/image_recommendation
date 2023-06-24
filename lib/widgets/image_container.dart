@@ -34,7 +34,7 @@ class ImageContainer extends StatelessWidget {
             width: 300,
             child: Column(
               children: [
-                Image(image: ExactAssetImage(Constants.maps[index]!), height: 90),
+                Image(image: ExactAssetImage(asset), height: 90),
                 const SizedBox(height: 5),
                 Text(snapshot.id.wrap(25), style: const TextStyle(fontSize: 20)),
                 const SizedBox(height: 5),
@@ -67,6 +67,15 @@ class ImageContainer extends StatelessWidget {
     );
   }
 
+  String get asset {
+    try {
+      return Constants.maps[index]!;
+    } catch (e) {
+      //return Constants.maps[Constants.maps.keys.last]!;
+      return Constants.maps.let((it) => it[it.keys.last]);
+    }
+  }
+
   void _updateRating(double value) {
     FirebaseFirestore.instance.runTransaction((transaction) async {
       final secureSnapshot = await transaction.get(snapshot.reference);
@@ -76,6 +85,13 @@ class ImageContainer extends StatelessWidget {
       transaction.update(secureSnapshot.reference, {'rating': value}); // debug here....
       log('DOCUMENT: ${secureSnapshot.reference.id} | VALUE: $value');
     });
+  }
+}
+
+extension<R> on R {
+  T let<T>(T? Function(R it) f) {
+    dynamic any;
+    return f(this) ?? any;
   }
 }
 

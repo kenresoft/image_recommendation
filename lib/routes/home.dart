@@ -51,15 +51,46 @@ class _HomeState extends State<Home> {
             if (collection != null) {
               return Scaffold(
                 appBar: AppBar(elevation: 1, shadowColor: Colors.white70, title: const Text(Constants.appName), actions: [
+                  TextButton(
+                    onPressed: () async {
+                      List<Map<String, dynamic>> list = [
+                        {
+                          'image_id': rand.Random().nextInt(100),
+                          'rating': rand.Random().nextInt(10).toDouble(),
+                          'views': rand.Random().nextInt(1000),
+                        },
+                        {
+                          'image_id': rand.Random().nextInt(100),
+                          'rating': rand.Random().nextInt(10).toDouble(),
+                          'views': rand.Random().nextInt(1000),
+                        },
+                        {
+                          'image_id': rand.Random().nextInt(100),
+                          'rating': rand.Random().nextInt(10).toDouble(),
+                          'views': rand.Random().nextInt(1000),
+                        }
+                      ];
+                      final batch = FirebaseFirestore.instance.batch();
+                      var all = FirebaseFirestore.instance.collection('dataset');
+                      for (var d in list) {
+                        try {
+                          batch.set(all.doc(), d);
+                        } catch (e) {
+                          log(e.toString());
+                        }
+                      }
+                      batch.commit();
+                    },
+                    child: const Text('Load all'),
+                  ),
                   IconButton(
-                    onPressed: () => showD(context),
+                    onPressed: () => displayDialog(context),
                     icon: const Icon(CupertinoIcons.doc_person),
                   )
                 ]),
                 body: ListView.builder(
                   itemCount: collection.docs.length /*maps.length*/,
                   itemBuilder: (BuildContext context, int index) {
-                    log(collection.docs.length.toString());
                     return ImageContainer(
                       index: index + 1,
                       snapshot: collection.docs[index],
@@ -78,7 +109,7 @@ class _HomeState extends State<Home> {
         });
   }
 
-  showD(BuildContext context) async {
+  displayDialog(BuildContext context) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -126,8 +157,4 @@ class _HomeState extends State<Home> {
       },
     );
   }
-
-  buildLaunch() => launch(context, Constants.dashboard);
-
-  onClickCard(String title) => log(title);
 }
